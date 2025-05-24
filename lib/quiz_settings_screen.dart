@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import './quiz_screen.dart';
+import './AppLocalizations.dart';
 
 class QuizSettingsScreen extends StatefulWidget {
   @override
@@ -34,7 +35,7 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
         categories = [];
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load categories. Please try again.')),
+        SnackBar(content: Text(AppLocalizations.of(context).translate('fetch_error'))),
       );
     }
   }
@@ -42,7 +43,7 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Quiz Settings')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).translate('quiz_settings'))),
       body: categories.isEmpty
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -51,7 +52,7 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
           child: Column(
             children: [
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Category'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context).translate('category')),
                 value: selectedCategory,
                 onChanged: (value) {
                   setState(() {
@@ -67,7 +68,7 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
               ),
               SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Difficulty'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context).translate('difficulty')),
                 value: selectedDifficulty,
                 onChanged: (value) {
                   setState(() {
@@ -75,14 +76,14 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
                   });
                 },
                 items: [
-                  DropdownMenuItem(value: 'easy', child: Text('Easy')),
-                  DropdownMenuItem(value: 'medium', child: Text('Medium')),
-                  DropdownMenuItem(value: 'hard', child: Text('Hard')),
+                  DropdownMenuItem(value: 'easy', child: Text(AppLocalizations.of(context).translate('easy'))),
+                  DropdownMenuItem(value: 'medium', child: Text(AppLocalizations.of(context).translate('medium'))),
+                  DropdownMenuItem(value: 'hard', child: Text(AppLocalizations.of(context).translate('hard'))),
                 ],
               ),
               SizedBox(height: 16),
               DropdownButtonFormField<int>(
-                decoration: InputDecoration(labelText: 'Number of Questions'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context).translate('number_of_questions')),
                 value: numberOfQuestions,
                 onChanged: (value) {
                   setState(() {
@@ -107,7 +108,7 @@ class _QuizSettingsScreenState extends State<QuizSettingsScreen> {
                     ),
                   );
                 },
-                child: Text('Start Quiz'),
+                child: Text(AppLocalizations.of(context).translate('start_quiz')),
               ),
             ],
           ),

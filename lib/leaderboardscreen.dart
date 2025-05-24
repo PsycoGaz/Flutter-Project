@@ -29,10 +29,31 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     });
   }
 
+  Future<void> resetScores() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    setState(() {
+      scores = {};
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Leaderboard')),
+      appBar: AppBar(
+        title: Text('Leaderboard'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () async {
+              await resetScores();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Leaderboard reset successfully')),
+              );
+            },
+          ),
+        ],
+      ),
       body: scores.isEmpty
           ? Center(child: Text('No scores available'))
           : ListView.builder(

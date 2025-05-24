@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './answersscreen.dart';
+import './AppLocalizations.dart';
 
 class ResultsScreen extends StatelessWidget {
   final int score;
@@ -40,7 +41,7 @@ class ResultsScreen extends StatelessWidget {
     saveBestScore();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Results')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).translate('results'))),
       body: FutureBuilder<int>(
         future: getBestScore(),
         builder: (context, snapshot) {
@@ -53,9 +54,15 @@ class ResultsScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Your Score: $score/$total', style: TextStyle(fontSize: 24)),
+                Text(
+                  '${AppLocalizations.of(context).translate('your_score')}: $score/$total',
+                  style: TextStyle(fontSize: 24),
+                ),
                 SizedBox(height: 16),
-                Text('Best Score: $bestScore/$total', style: TextStyle(fontSize: 20, color: Colors.green)),
+                Text(
+                  '${AppLocalizations.of(context).translate('best_score')}: $bestScore/$total',
+                  style: TextStyle(fontSize: 20, color: Colors.green),
+                ),
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
@@ -69,14 +76,14 @@ class ResultsScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Text('View Answers'),
+                  child: Text(AppLocalizations.of(context).translate('view_answers')),
                 ),
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Back to Home'),
+                  child: Text(AppLocalizations.of(context).translate('back_to_home')),
                 ),
               ],
             ),

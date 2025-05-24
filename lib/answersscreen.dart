@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:html_unescape/html_unescape.dart';
+import './AppLocalizations.dart';
 
 class AnswersScreen extends StatelessWidget {
   final List<dynamic> questions;
@@ -12,7 +13,7 @@ class AnswersScreen extends StatelessWidget {
     final unescape = HtmlUnescape();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Answers')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).translate('answers'))),
       body: ListView.builder(
         itemCount: questions.length,
         itemBuilder: (context, index) {
@@ -30,12 +31,12 @@ class AnswersScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Your Answer: $userAnswer',
+                      '${AppLocalizations.of(context).translate('your_answer')}: $userAnswer',
                       style: TextStyle(
                         color: isCorrect ? Colors.green : Colors.red,
                       ),
                     ),
-                    Text('Correct Answer: $correctAnswer'),
+                    Text('${AppLocalizations.of(context).translate('correct_answer')}: $correctAnswer'),
                   ],
                 ),
               ),

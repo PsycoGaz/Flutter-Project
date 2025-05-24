@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import './home_screen.dart';
+import './AppLocalizations.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,10 +14,17 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.system;
+  Locale _locale = Locale('en');
 
   void _toggleTheme() {
     setState(() {
       _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
+
+  void _changeLanguage(Locale locale) {
+    setState(() {
+      _locale = locale;
     });
   }
 
@@ -31,7 +40,22 @@ class _MyAppState extends State<MyApp> {
         brightness: Brightness.dark,
       ),
       themeMode: _themeMode,
-      home: HomeScreen(onToggleTheme: _toggleTheme),
+      locale: _locale,
+      supportedLocales: [
+        Locale('en'),
+        Locale('fr'),
+        Locale('ar'),
+      ],
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: HomeScreen(
+        onToggleTheme: _toggleTheme,
+        onChangeLanguage: _changeLanguage,
+      ),
       debugShowCheckedModeBanner: false,
     );
   }

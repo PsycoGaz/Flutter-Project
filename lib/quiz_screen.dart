@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:html_unescape/html_unescape.dart';
+import 'package:vibration/vibration.dart';
+import 'package:audioplayers/audioplayers.dart';
 import './results_screen.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -29,6 +31,7 @@ class _QuizScreenState extends State<QuizScreen> {
   final unescape = HtmlUnescape();
   Timer? timer;
   int timeLeft = 20;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -40,6 +43,10 @@ class _QuizScreenState extends State<QuizScreen> {
   void dispose() {
     timer?.cancel();
     super.dispose();
+  }
+
+  Future<void> playClickSound() async {
+    await _audioPlayer.play(AssetSource('click.mp3'));
   }
 
   Future<void> fetchQuestions() async {
@@ -109,7 +116,12 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
-  void checkAnswer(String selectedAnswer) {
+  void checkAnswer(String selectedAnswer) async {
+    if (await Vibration.hasVibrator() ?? false) {
+      Vibration.vibrate(duration: 100);
+    }
+    await playClickSound();
+
     userAnswers.add(selectedAnswer);
     final correctAnswer = questions[currentQuestionIndex]['correct_answer'];
     if (selectedAnswer == correctAnswer) {
@@ -122,9 +134,17 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textTheme = Theme.of(context).textTheme;
+
     if (isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text('Quiz')),
+        appBar: AppBar(
+          backgroundColor: isDark ? Colors.black87 : Colors.white,
+          title: Text('Quiz', style: textTheme.titleLarge?.copyWith(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold)),
+          iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
+          elevation: 0,
+        ),
         body: Center(child: CircularProgressIndicator()),
       );
     }
@@ -133,31 +153,51 @@ class _QuizScreenState extends State<QuizScreen> {
     final answers = question['shuffled_answers'];
 
     return Scaffold(
-      appBar: AppBar(title: Text('Quiz')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(
+        backgroundColor: isDark ? Colors.black87 : Colors.white,
+        title: Text('Quiz', style: textTheme.titleLarge?.copyWith(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold)),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
+        elevation: 0,
+      ),
+      body: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        color: isDark ? Colors.black : Colors.grey[100],
+        padding: EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               'Question ${currentQuestionIndex + 1}/${questions.length}',
-              style: TextStyle(fontSize: 18),
+              style: textTheme.titleMedium?.copyWith(color: isDark ? Colors.white70 : Colors.black87),
             ),
             SizedBox(height: 16),
             Text(
               unescape.convert(question['question']),
-              style: TextStyle(fontSize: 20),
+              style: textTheme.titleLarge?.copyWith(color: isDark ? Colors.white : Colors.black),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 20),
             Text(
               'Time Left: $timeLeft seconds',
-              style: TextStyle(fontSize: 18, color: Colors.red),
+              style: textTheme.titleMedium?.copyWith(color: Colors.redAccent, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 24),
             ...answers.map((answer) {
-              return ElevatedButton(
-                onPressed: () => checkAnswer(answer),
-                child: Text(unescape.convert(answer)),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: ElevatedButton(
+                  onPressed: () => checkAnswer(answer),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDark ? Colors.deepPurpleAccent : Colors.deepPurple,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    elevation: 5,
+                  ),
+                  child: Text(
+                    unescape.convert(answer),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                ),
               );
             }).toList(),
           ],
